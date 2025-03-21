@@ -14,4 +14,10 @@
     <Folder Include="Controllers\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\OrderManagementAPI.Application\OrderManagementAPI.Application.csproj" />
+    <ProjectReference Include="..\OrderManagementAPI.Domain\OrderManagementAPI.Domain.csproj" />
+    <ProjectReference Include="..\OrderManagementAPI.Infrastructure\OrderManagementAPI.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
