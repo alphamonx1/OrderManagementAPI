@@ -20,10 +20,11 @@ namespace OrderManagementAPI.Infrastructure.UseCases.OrderUseCases.Repositories
             var order = await _context.Orders.FirstOrDefaultAsync(x => x.OrderId == OrderId);
             if (order is not null)
             {
-                var orderDetails = _mapper.Map<List<OrderDetails>>(request);
+                var orderDetails = _mapper.Map<List<OrderDetails>>(request.OrderDetails);
                 foreach (var orderDetail in orderDetails)
                 {
                     orderDetail.OrderId = OrderId;
+                    order.TotalAmount += (orderDetail.Quantity * orderDetail.Price);
                 }
                 await _context.OrderDetails.AddRangeAsync(orderDetails);
                 result = await _context.SaveChangesAsync() > 0;
@@ -44,6 +45,7 @@ namespace OrderManagementAPI.Infrastructure.UseCases.OrderUseCases.Repositories
                 var orderDetail = await _context.OrderDetails.FirstOrDefaultAsync(x => x.OrderDetailId == OrderDetailId);
                 if (orderDetail is not null)
                 {
+                    order.TotalAmount -= (orderDetail.Price * orderDetail.Quantity);
                     _context.OrderDetails.Remove(orderDetail);
                     result = await _context.SaveChangesAsync() > 0;
                 }

@@ -68,7 +68,7 @@ namespace OrderManagementAPI.Controllers
             [FromBody, SwaggerParameter(Description = "Order data to be created")] CreateOrderRequest request)
         {
             var result = await _orderRepository.CreateNewOrderAsync(request);
-            return CreatedAtAction(nameof(GetOrderById), new { status = result }, result);
+            return CreatedAtAction(nameof(CreateOrder), new { status = result }, result);
         }
 
         /// <summary>

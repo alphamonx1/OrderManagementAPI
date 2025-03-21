@@ -39,7 +39,8 @@ namespace OrderManagementAPI.Infrastructure.UseCases.OrderDetailUseCases.Reposit
 
         public async Task<List<GetOrderResponse>> GetAllOrderAsync()
         {
-            List<GetOrderResponse> orders = _mapper.Map<List<GetOrderResponse>>(await _dbContext.Orders.ToListAsync());
+            var dbOrders = await _dbContext.Orders.FromSqlRaw("EXECUTE sp_GetAllOrder").ToListAsync();
+            List<GetOrderResponse> orders = _mapper.Map<List<GetOrderResponse>>(dbOrders);
             if (orders.Count > 0)
             {
                 return orders;
@@ -112,6 +113,12 @@ namespace OrderManagementAPI.Infrastructure.UseCases.OrderDetailUseCases.Reposit
             if (dbOrder != null)
             {
                 _dbContext.Orders.Remove(dbOrder);
+                var orderDetails = await _dbContext.OrderDetails.Where(x => x.OrderId == orderId).ToListAsync();
+                if (orderDetails.Count > 0)
+                {
+                    _dbContext.OrderDetails.RemoveRange(orderDetails);
+                }
+
                 result = await _dbContext.SaveChangesAsync() > 0;
             }
             else

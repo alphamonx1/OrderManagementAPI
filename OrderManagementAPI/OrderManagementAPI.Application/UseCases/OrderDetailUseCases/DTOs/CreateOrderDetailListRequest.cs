@@ -2,6 +2,6 @@
 {
     public class CreateOrderDetailListRequest
     {
-        public List<CreateOrderDetailRequest> OrderDetails { get; set; }
+        public required List<CreateOrderDetailRequest> OrderDetails { get; set; }
     }
 }
