@@ -4,7 +4,7 @@ namespace OrderManagementAPI.Application.UseCases.OrderDetailUseCases.Repositori
 {
     public interface IOrderDetailRepository
     {
-        Task<bool> CreateOrderDetailAsync(int OrderId, List<CreateOrderDetailRequest> request);
+        Task<bool> CreateOrderDetailAsync(int OrderId, CreateOrderDetailListRequest request);
         Task<List<GetOrderDetailResponse>> GetOrderDetailAsync(int OrderId);
         Task<bool> DeleteOrderDetailFromOrderAsync(int OrderId, int OrderDetailId);
     }

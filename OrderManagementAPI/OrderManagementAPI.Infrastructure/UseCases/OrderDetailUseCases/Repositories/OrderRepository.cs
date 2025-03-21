@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using OrderManagementAPI.Application.UseCases.OrderUseCases.DTOs;
 using OrderManagementAPI.Application.UseCases.OrderUseCases.Repositories;
 using OrderManagementAPI.Domain.Entities;
@@ -11,11 +12,13 @@ namespace OrderManagementAPI.Infrastructure.UseCases.OrderDetailUseCases.Reposit
     {
         private readonly OrderManagementDbContext _dbContext;
         private readonly IMapper _mapper;
+        private readonly ILogger<OrderRepository> _logger;
 
-        public OrderRepository(OrderManagementDbContext dbContext, IMapper mapper)
+        public OrderRepository(OrderManagementDbContext dbContext, IMapper mapper, ILogger<OrderRepository> logger)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<bool> CreateNewOrderAsync(CreateOrderRequest request)
@@ -27,6 +30,10 @@ namespace OrderManagementAPI.Infrastructure.UseCases.OrderDetailUseCases.Reposit
                 await _dbContext.Orders.AddAsync(newOrder);
                 result = await _dbContext.SaveChangesAsync() > 0;
             }
+            else
+            {
+                _logger.LogError("CreateOrderRequest is null");
+            }
             return result;
         }
 
@@ -37,6 +44,10 @@ namespace OrderManagementAPI.Infrastructure.UseCases.OrderDetailUseCases.Reposit
             {
                 return orders;
             }
+            else
+            {
+                _logger.LogInformation("No orders found");
+            }
             return [];
         }
 
@@ -46,6 +57,10 @@ namespace OrderManagementAPI.Infrastructure.UseCases.OrderDetailUseCases.Reposit
             if (order != null)
             {
                 return order;
+            }
+            else
+            {
+                _logger.LogError("Order with ID {OrderId} not found", orderId);
             }
             return new GetOrderResponse();
         }
@@ -63,6 +78,10 @@ namespace OrderManagementAPI.Infrastructure.UseCases.OrderDetailUseCases.Reposit
                 _dbContext.Orders.Update(dbOrder);
                 result = await _dbContext.SaveChangesAsync() > 0;
             }
+            else
+            {
+                _logger.LogError("Order with ID {orderId} not found", orderId);
+            }
             return result;
         }
 
@@ -70,7 +89,7 @@ namespace OrderManagementAPI.Infrastructure.UseCases.OrderDetailUseCases.Reposit
         {
             var result = false;
             var dbOrder = await _dbContext.Orders.FirstOrDefaultAsync(x => x.OrderId == orderId);
-            if(dbOrder != null)
+            if (dbOrder != null)
             {
                 dbOrder.CustomerName = request.CustomerName;
                 dbOrder.TotalAmount = request.TotalAmount;
@@ -78,6 +97,10 @@ namespace OrderManagementAPI.Infrastructure.UseCases.OrderDetailUseCases.Reposit
                 dbOrder.UpdatedAt = request.UpdatedAt;
                 _dbContext.Orders.Update(dbOrder);
                 result = await _dbContext.SaveChangesAsync() > 0;
+            }
+            else
+            {
+                _logger.LogError("Order with ID {orderId} not found", orderId);
             }
             return result;
         }
@@ -90,6 +113,10 @@ namespace OrderManagementAPI.Infrastructure.UseCases.OrderDetailUseCases.Reposit
             {
                 _dbContext.Orders.Remove(dbOrder);
                 result = await _dbContext.SaveChangesAsync() > 0;
+            }
+            else
+            {
+                _logger.LogError("Order with ID {orderId} not found", orderId);
             }
             return result;
         }
