@@ -8,7 +8,6 @@ namespace OrderManagementAPI.Application.UseCases.OrderDetailUseCases.Validators
         public CreateOrderRequestValidator()
         {
             RuleFor(x => x.CustomerName).NotEmpty();
-            RuleFor(x => x.TotalAmount).GreaterThan(0);
         }
     }
 }
